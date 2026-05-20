@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TodosStore } from './store/todos.store';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,10 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('angular-signalstore-example');
+
+  store = inject(TodosStore);
+
+  ngOnInit() {
+    this.store.todos()
+  }
 }
