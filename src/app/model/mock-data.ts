@@ -4,7 +4,7 @@ export const TODOS: Todo[] = [
   {
     id: '1',
     title: 'Learn Angular',
-    completed: false,
+    completed: true,
   },
   {
     id: '2',

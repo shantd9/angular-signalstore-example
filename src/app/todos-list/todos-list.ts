@@ -30,6 +30,10 @@ export class TodosList {
 
   async onDeleteTodo(id: string, event: MouseEvent) {
     event.stopPropagation();
-    await this.store.deleteTodo(id)
+    await this.store.deleteTodo(id);
+  }
+
+  async onTodoToggled(id: string, completed: boolean) {
+    await this.store.updateTodo(id, completed);
   }
 }
