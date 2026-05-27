@@ -1,28 +1,30 @@
 import { Todo } from '../model/todo.model';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { TodosService } from '../services/todos.service';
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 
-export type TodosFilter = "all" | "completed" | "pending";
+export type TodosFilter = 'all' | 'completed' | 'pending';
 
 type TodosState = {
   todos: Todo[];
   loading: boolean;
-  filter: TodosFilter
-}
+  filter: TodosFilter;
+};
 
 const initialState: TodosState = {
   todos: [],
   loading: false,
-  filter: "all",
-}
+  filter: 'all',
+};
 
-export const TodosStore = signalStore({providedIn: 'root'}, withState(initialState), withMethods(
-  (store, todosService = inject(TodosService)) => ({
+export const TodosStore = signalStore(
+  { providedIn: 'root' },
+  withState(initialState),
+  withMethods((store, todosService = inject(TodosService)) => ({
     async loadAll() {
       patchState(store, { loading: true });
 
-      const todos = await todosService.getTodos()
+      const todos = await todosService.getTodos();
 
       patchState(store, { todos: todos, loading: false });
     },
@@ -31,14 +33,30 @@ export const TodosStore = signalStore({providedIn: 'root'}, withState(initialSta
       patchState(store, (state) => ({ todos: [...state.todos, todo] }));
     },
     async deleteTodo(id: string) {
-      await todosService.deleteTodo(id)
-      patchState(store, (state) => ({todos: state.todos.filter(t => t.id !== id)}));
+      await todosService.deleteTodo(id);
+      patchState(store, (state) => ({ todos: state.todos.filter((t) => t.id !== id) }));
     },
     async updateTodo(id: string, completed: boolean) {
       await todosService.updateTodo(id, completed);
       patchState(store, (state) => ({
         todos: state.todos.map((todo) => (todo.id === id ? { ...todo, completed } : todo)),
       }));
-    }
-  })
-))
+    },
+    updateFilter(filter: TodosFilter) {
+      patchState(store, { filter });
+    },
+  })),
+  withComputed((state) => ({
+    filteredTodos: computed(() => {
+      const todos = state.todos();
+      switch (state.filter()) {
+        case 'all':
+          return todos;
+        case 'completed':
+          return todos.filter((t) => t.completed);
+        case 'pending':
+          return todos.filter((t) => !t.completed);
+      }
+    }),
+  })),
+);
