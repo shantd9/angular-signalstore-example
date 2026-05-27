@@ -1,3 +1,8 @@
 <div class="app">
-  <todos-list />
+  @if (!store.loading()) {
+    <todos-list />
+  }
+  @else {
+    <mat-spinner />
+  }
 </div>
