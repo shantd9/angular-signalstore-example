@@ -25,6 +25,13 @@ export const TodosStore = signalStore({providedIn: 'root'}, withState(initialSta
       const todos = await todosService.getTodos()
 
       patchState(store, { todos: todos, loading: false });
+    },
+    async addTodo(title: string) {
+      const todo = await todosService.addTodo({ title, completed: false });
+      patchState(store, (state) => ({ todos: [...state.todos, todo] }));
+    },
+    async deleteTodo(id: string) {
+      patchState(store, (state) => ({todos: state.todos.filter(t => t.id !== id)}));
     }
   })
 ))
