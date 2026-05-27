@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TodosStore } from './store/todos.store';
 import { JsonPipe } from '@angular/common';
+import { TodosList } from './todos-list/todos-list';
 
 @Component({
   selector: 'app-root',
-  imports: [JsonPipe],
+  imports: [JsonPipe, TodosList],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
